@@ -11,9 +11,8 @@
   let layer4Color2 = $derived(colors.layer4Color2);
 
   let canvas;
-  $inspect(image);
 
-  $effect(renderPreviewOnCanvas); 
+  $effect(() => {image.url, image.positionX, image.positionY, image.sizeWidth, image.sizeHeight, image.color1, image.color2, renderPreviewOnCanvas()}); 
   function renderPreviewOnCanvas () {
     const folderSvg = `
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -73,20 +72,77 @@
     const folderSvgUrl = URL.createObjectURL(folderSvgBlob);
 
     const folderSvgImg = new Image();
-    folderSvgImg.onload = () => {
+    folderSvgImg.onload = async () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous drawing
       ctx.drawImage(folderSvgImg, 0, 0);
       URL.revokeObjectURL(folderSvgUrl); // Free up memory
 
       // Image
       if (image.url) {
-        console.log(image.url)
-
         const imageImg = new Image();
+
         imageImg.onload = () => {
           ctx.drawImage(imageImg, image.positionX, image.positionY, image.sizeWidth, image.sizeHeight);
         };
-        imageImg.src = image.url;
+
+        if (image.type.includes("svg")) { // for gradient
+          const response = await fetch(image.url);
+          const svgContent = await response.text();
+
+          const parser = new DOMParser();
+          const svgDoc = parser.parseFromString(svgContent, "image/svg+xml");
+
+          // Create the gradient definition
+          const defs = svgDoc.querySelector("defs") || svgDoc.createElementNS("http://www.w3.org/2000/svg", "defs");
+          const gradientId = "dynamicGradient";
+
+          // Remove any existing gradient with the same ID to avoid duplicates
+          const existingGradient = svgDoc.querySelector(`#${gradientId}`);
+          if (existingGradient) {
+            existingGradient.remove();
+          }
+
+          const linearGradient = svgDoc.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
+          linearGradient.setAttribute("id", gradientId);
+          linearGradient.setAttribute("x1", "0%");
+          linearGradient.setAttribute("y1", "0%");
+          linearGradient.setAttribute("x2", "100%");
+          linearGradient.setAttribute("y2", "100%");
+
+          // Define gradient stops
+          const stop1 = svgDoc.createElementNS("http://www.w3.org/2000/svg", "stop");
+          stop1.setAttribute("offset", "0%");
+          stop1.setAttribute("style", `stop-color:${image.color1};stop-opacity:1;`);
+          
+          const stop2 = svgDoc.createElementNS("http://www.w3.org/2000/svg", "stop");
+          stop2.setAttribute("offset", "100%");
+          stop2.setAttribute("style", `stop-color:${image.color2};stop-opacity:1;`);
+
+          // Append stops to the gradient
+          linearGradient.appendChild(stop1);
+          linearGradient.appendChild(stop2);
+          defs.appendChild(linearGradient);
+
+          // Append defs to the SVG if not already present
+          if (!svgDoc.querySelector("defs")) {
+            svgDoc.documentElement.insertBefore(defs, svgDoc.documentElement.firstChild);
+          }
+
+          // Update all elements with a fill attribute to use the gradient
+          const svgElements = svgDoc.querySelectorAll("[fill]");
+          svgElements.forEach((el) => {
+            el.setAttribute("fill", `url(#${gradientId})`);
+          });
+
+          // Serialize the updated SVG content
+          const serializer = new XMLSerializer();
+          const updatedSvg = serializer.serializeToString(svgDoc.documentElement);
+          const svgBlob = new Blob([updatedSvg], { type: "image/svg+xml" });
+          const updatedSvgUrl = URL.createObjectURL(svgBlob);
+          imageImg.src = updatedSvgUrl;
+        } else {
+          imageImg.src = image.url;
+        }
       }
     };
     folderSvgImg.src = folderSvgUrl;

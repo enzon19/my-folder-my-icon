@@ -11,19 +11,14 @@ export const icon = $state({
   image: {
     url: null,
     type: "",
-    color1: "",
-    color2: "",
-    // position: {
-    //   x: 0,
-    //   y: 0
-    // },
-    // size: {
-    //   width: 1000,
-    //   height: 1000,
-    // }
+    color1: "#c99101",
+    color2: "#a26d01",
     positionX: 0,
     positionY: 0,
     sizeWidth: 1000,
-    sizeHeight: 1000
+    sizeHeight: 1000,
+    originalWidth: 1000,
+    originalHeight: 1000,
+    scale: 100,
   }
 });
