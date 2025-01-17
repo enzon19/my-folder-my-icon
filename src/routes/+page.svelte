@@ -43,6 +43,7 @@
     {/if}
   </div>
 </div>
+<div class="text-center mt-4">Made by <a href="https://enzon19.com" target="_blank" class="underline">enzon19</a> • <a href="https://enzon19.com/#donate" target="_blank" class="underline">Donate</a></div>
 
 <style>
   .grid-background {
