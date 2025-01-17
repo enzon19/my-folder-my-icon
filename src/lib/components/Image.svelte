@@ -3,6 +3,7 @@
 	import { icon } from '$lib/icon.svelte.js';
   import Range from "./Range.svelte";
   import ColorPicker from "./ColorPicker.svelte";
+  import Button from "./Button.svelte";
 
   function fileUpload(data) {
     const receivedFile = data.detail[0];
@@ -105,21 +106,21 @@
         <ColorPicker label="Icon, Color 1" id="iconColor1" bind:value={icon.image.color1}/>
         <ColorPicker label="Icon, Color 2" id="iconColor2" bind:value={icon.image.color2}/>
       </div>
-      <button class="bg-neutral-800/50 rounded-lg border shadow px-4 border-neutral-800" onclick={removeColors}>
+      <Button onclick={removeColors}>
         No color
-      </button>
+      </Button>
     </div>
     <div class="flex flex-row gap-2">
       <Range label="X Position:" id="x" max=1000 bind:value={icon.image.positionX}/>
-      <button class="bg-neutral-800/50 rounded-lg border shadow px-4 border-neutral-800" onclick={centerImageX}>
+      <Button onclick={centerImageX}>
         Center
-      </button>
+      </Button>
     </div>
     <div class="flex flex-row gap-2">
       <Range label="Y Position:" id="y" max=1000 bind:value={icon.image.positionY}/>
-      <button class="bg-neutral-800/50 rounded-lg border shadow px-4 border-neutral-800" onclick={centerImageY}>
+      <Button onclick={centerImageY}>
         Center
-      </button>
+      </Button>
     </div>
     <Range label="Scale:" id="scale" max=5000 bind:value={icon.image.scale} oninput={updateSize}/>
     <Range label="Width:" id="width" max={icon.image.originalHeight * 4} bind:value={icon.image.sizeWidth}/>

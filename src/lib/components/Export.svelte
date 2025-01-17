@@ -1,6 +1,7 @@
 <script>
 	import { icon } from '$lib/icon.svelte.js';
   import { PngIcoConverter } from "$lib/png2icojs.min.js";
+  import Button from "./Button.svelte";
 
   function downloadPNG() {
     const preview = document.querySelector('#preview');
@@ -54,7 +55,7 @@
 
 <div class="grid grid-flow-row md:grid-cols-2 gap-2">
   <button onclick={downloadICO} class="py-2 px-4 bg-[#62cdfe] text-black font-bold rounded-lg">Download ICO</button>
-  <button onclick={downloadPNG} class="py-2 px-4 bg-neutral-600 rounded-lg">Download PNG</button>
+  <Button onclick={downloadPNG}>Download PNG</Button>
 </div>
 <div class="mt-2 flex flex-col gap-1">
   <span>Export and import icon settings:</span>
