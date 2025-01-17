@@ -79,6 +79,11 @@
       scale: 100,
     };
   }
+
+  function removeColors() {
+    icon.image.color1 = null;
+    icon.image.color2 = null;
+  }
 </script>
 
 {#if !icon.image.url}
@@ -91,15 +96,19 @@
     onclick={handleClick}
   >
     <div>Drop a image or icon here or click to select one</div>
-    <div class="text-sm text-neutral-500 mt-2">Recommended: SVG, 1000 × 1000</div>
   </div>
   <input type="file" bind:this={fileInput} class="hidden" onchange={handleFileChange} accept="image/*"/>
 {:else}
   <div class="flex flex-col gap-2">
-    {#if icon.image.type.includes("svg")}
-      <ColorPicker label="Icon, Color 1" id="iconColor1" bind:value={icon.image.color1}/>
-      <ColorPicker label="Icon, Color 2" id="iconColor2" bind:value={icon.image.color2}/>
-    {/if}
+    <div class="flex flex-row gap-2">
+      <div class="flex flex-col gap-2 w-full">
+        <ColorPicker label="Icon, Color 1" id="iconColor1" bind:value={icon.image.color1}/>
+        <ColorPicker label="Icon, Color 2" id="iconColor2" bind:value={icon.image.color2}/>
+      </div>
+      <button class="bg-neutral-800/50 rounded-lg border shadow px-4 border-neutral-800" onclick={removeColors}>
+        No color
+      </button>
+    </div>
     <div class="flex flex-row gap-2">
       <Range label="X Position:" id="x" max=1000 bind:value={icon.image.positionX}/>
       <button class="bg-neutral-800/50 rounded-lg border shadow px-4 border-neutral-800" onclick={centerImageX}>
